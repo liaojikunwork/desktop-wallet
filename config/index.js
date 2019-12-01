@@ -26,11 +26,7 @@ exports.VENDOR_FIELD = {
 
 exports.I18N = {
   defaultLocale: 'en-US',
-  enabledLocales: [
-    'en-US',
-    'it-IT',
-    'pt-BR'
-  ]
+  enabledLocales: ['en-US', 'it-IT', 'pt-BR']
 }
 
 exports.BIP39 = {
@@ -70,11 +66,7 @@ exports.MARKET = {
     baseUrl: 'https://min-api.cryptocompare.com'
   },
   defaultCurrency: 'BTC',
-  crypto: [
-    'BTC',
-    'ETH',
-    'LTC'
-  ],
+  crypto: ['BTC', 'ETH', 'LTC'],
   currencies: {
     BTC: { symbol: 'Ƀ', fractionDigits: 8 },
     ETH: { symbol: 'Ξ', fractionDigits: 8 },
@@ -127,4 +119,16 @@ exports.V1 = {
     0 * 1e8, // Multu-payment (not supported yet)
     0 * 1e8 // Delegate resignation (not supported yet)
   ]
+}
+
+exports.APIURLS = {
+  transactions: 'https://api.ark.io/api/transactions/',
+  wallets: 'https://api.ark.io/api/wallets/',
+  delegates: 'https://api.ark.io/api/delegates/'
+}
+
+exports.SEARCHITEMS = {
+  transaction: 'transaction',
+  wallet: 'wallet',
+  delegate: 'delegate'
 }

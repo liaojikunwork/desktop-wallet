@@ -3,6 +3,8 @@
     :label="$t('SEARCH.DEFAULT_PLACEHOLDER')"
     name="search"
     class="SearchInput w-full"
+    :v-model="value"
+    @input="onInput"
   >
     <SvgIcon
       slot="left"
@@ -23,12 +25,26 @@ export default {
   components: {
     InputText,
     SvgIcon
+  },
+
+  props: {
+    value: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
+
+  methods: {
+    onInput (e) {
+      this.$emit('input', e)
+    }
   }
 }
 </script>
 
 <style lang="postcss">
 .SearchInput .InputField__label {
-  left: calc(20px + config('margin.2'))
+  left: calc(20px + config('margin.2'));
 }
 </style>

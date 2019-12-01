@@ -7,9 +7,7 @@
     }"
     class="AppSidemenu relative bg-transparent"
   >
-    <div
-      class="AppSidemenu__container flexify w-full md:h-full justify-between"
-    >
+    <div class="AppSidemenu__container flexify w-full md:h-full justify-between">
       <!-- ARK logo -->
       <RouterLink
         :title="$t('APP_SIDEMENU.DASHBOARD')"
@@ -50,6 +48,16 @@
             :is-horizontal="isHorizontal"
             :show-badge="showUnread"
             icon="whitepaper"
+            @click="redirect($event)"
+          />
+
+          <!-- Search -->
+          <MenuNavigationItem
+            id="search"
+            :title="$t('APP_SIDEMENU.SEARCH')"
+            class="AppSidemenu__item"
+            :is-horizontal="isHorizontal"
+            icon="search"
             @click="redirect($event)"
           />
 
@@ -121,7 +129,11 @@
                   'h-12 w-12': hasStandardAvatar && isHorizontal,
                   'h-18 w-18': hasStandardAvatar && !isHorizontal
                 }"
-                :title="$t('APP_SIDEMENU.CURRENT_PROFILE', { profileName: session_profile.name })"
+                :title="
+                  $t('APP_SIDEMENU.CURRENT_PROFILE', {
+                    profileName: session_profile.name
+                  })
+                "
                 letter-size="xl"
               >
                 <SvgIcon
@@ -190,7 +202,10 @@ export default {
       return this.$store.getters['plugin/menuItems'].length
     },
     hasStandardAvatar () {
-      return this.session_profile.avatar && typeof this.session_profile.avatar === 'string'
+      return (
+        this.session_profile.avatar &&
+        typeof this.session_profile.avatar === 'string'
+      )
     },
     pluginAvatar () {
       if (this.session_profile.avatar && this.session_profile.avatar.pluginId) {
@@ -233,18 +248,32 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.AppSidemenu__container__scrollable .flexify { @apply flex-none }
-.AppSidemenu__logo { transition: opacity 0.5s; }
+.AppSidemenu__container__scrollable .flexify {
+  @apply flex-none;
+}
+.AppSidemenu__logo {
+  transition: opacity 0.5s;
+}
 
 .AppSidemenu__avatar__container {
   transition: opacity 0.5s;
 }
 
-.AppSidemenu--horizontal .AppSidemenu__item { @apply w-16 }
-.AppSidemenu--horizontal .AppSidemenu__logo { @apply p-4 }
-.AppSidemenu--horizontal .AppSidemenu__logo img { @apply h-12 }
-.AppSidemenu--horizontal .flexify { @apply flex flex-row }
-.AppSidemenu--horizontal { @apply h-18; }
+.AppSidemenu--horizontal .AppSidemenu__item {
+  @apply w-16;
+}
+.AppSidemenu--horizontal .AppSidemenu__logo {
+  @apply p-4;
+}
+.AppSidemenu--horizontal .AppSidemenu__logo img {
+  @apply h-12;
+}
+.AppSidemenu--horizontal .flexify {
+  @apply flex flex-row;
+}
+.AppSidemenu--horizontal {
+  @apply h-18;
+}
 .AppSidemenu--horizontal .AppSidemenu__avatar__dots {
   @apply absolute p-2 rounded-full bg-theme-feature;
   right: 0.1rem;
@@ -253,12 +282,24 @@ export default {
   height: 1.5rem;
 }
 
-.AppSidemenu--vertical .AppSidemenu__container__scrollable { @apply rounded-lg py-2 }
-.AppSidemenu--vertical .AppSidemenu__item { @apply h-16 }
-.AppSidemenu--vertical .AppSidemenu__logo { @apply rounded-lg mb-3 p-5 }
-.AppSidemenu--vertical .AppSidemenu__logo img { @apply w-18 }
-.AppSidemenu--vertical .flexify { @apply flex flex-col }
-.AppSidemenu--vertical { @apply w-22 mx-6 rounded-lg }
+.AppSidemenu--vertical .AppSidemenu__container__scrollable {
+  @apply rounded-lg py-2;
+}
+.AppSidemenu--vertical .AppSidemenu__item {
+  @apply h-16;
+}
+.AppSidemenu--vertical .AppSidemenu__logo {
+  @apply rounded-lg mb-3 p-5;
+}
+.AppSidemenu--vertical .AppSidemenu__logo img {
+  @apply w-18;
+}
+.AppSidemenu--vertical .flexify {
+  @apply flex flex-col;
+}
+.AppSidemenu--vertical {
+  @apply w-22 mx-6 rounded-lg;
+}
 .AppSidemenu--vertical .AppSidemenu__avatar__dots {
   @apply absolute p-2 rounded-full bg-theme-feature shadow;
   right: 1rem;

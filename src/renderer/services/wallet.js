@@ -1,6 +1,7 @@
 import * as bip39 from 'bip39'
 import { Crypto, Identities } from '@arkecosystem/crypto'
 import { version as mainnetVersion } from '@config/networks/mainnet'
+import { APIURLS } from '@config'
 import store from '@/store'
 import got from 'got'
 
@@ -8,7 +9,7 @@ export default class WalletService {
   /*
    * Normalizes the passphrase by decomposing any characters (if applicable)
    * This is mainly used for the korean language where characters are combined while the passphrase was based on the decomposed consonants
-  */
+   */
   static normalizePassphrase (passphrase) {
     return passphrase.normalize('NFD')
   }
@@ -20,8 +21,14 @@ export default class WalletService {
    * @return {Object}
    */
   static generate (pubKeyHash, language) {
-    const passphrase = bip39.generateMnemonic(null, null, bip39.wordlists[language])
-    const publicKey = Identities.Keys.fromPassphrase(this.normalizePassphrase(passphrase)).publicKey
+    const passphrase = bip39.generateMnemonic(
+      null,
+      null,
+      bip39.wordlists[language]
+    )
+    const publicKey = Identities.Keys.fromPassphrase(
+      this.normalizePassphrase(passphrase)
+    ).publicKey
     return {
       address: Identities.Address.fromPublicKey(publicKey, pubKeyHash),
       passphrase
@@ -42,7 +49,10 @@ export default class WalletService {
    * @return {String}
    */
   static getAddress (passphrase, pubKeyHash) {
-    return Identities.Address.fromPassphrase(this.normalizePassphrase(passphrase), pubKeyHash)
+    return Identities.Address.fromPassphrase(
+      this.normalizePassphrase(passphrase),
+      pubKeyHash
+    )
   }
 
   static getAddressFromPublicKey (publicKey, pubKeyHash) {
@@ -55,7 +65,8 @@ export default class WalletService {
    * @return {String}
    */
   static getPublicKeyFromPassphrase (passphrase) {
-    return Identities.Keys.fromPassphrase(this.normalizePassphrase(passphrase)).publicKey
+    return Identities.Keys.fromPassphrase(this.normalizePassphrase(passphrase))
+      .publicKey
   }
 
   /**
@@ -68,7 +79,8 @@ export default class WalletService {
       return false
     }
 
-    const neoUrl = 'https://neoscan.io/api/main_net/v1/get_last_transactions_by_address/'
+    const neoUrl =
+      'https://neoscan.io/api/main_net/v1/get_last_transactions_by_address/'
     const response = await got(neoUrl + address)
     return response.status === 200 && response.body && response.body.length > 0
   }
@@ -115,13 +127,24 @@ export default class WalletService {
   }
 
   /**
+   * Check that an address is valid.
+   * @param {Number} pubKeyHash - also known as address or network version
+   * @return {Boolean}
+   */
+  static validatePublicKey (address, pubKeyHash) {
+    return Identities.PublicKey.validate(address, pubKeyHash)
+  }
+
+  /**
    * Check that a passphrase is valid.
    * @param {String} passhrase
    * @param {Number} pubKeyHash - also known as address or network version
    * @return {Boolean}
    */
   static validatePassphrase (passphrase, pubKeyHash) {
-    const publicKey = Identities.Keys.fromPassphrase(this.normalizePassphrase(passphrase)).publicKey
+    const publicKey = Identities.Keys.fromPassphrase(
+      this.normalizePassphrase(passphrase)
+    ).publicKey
     return Identities.PublicKey.validate(publicKey, pubKeyHash)
   }
 
@@ -132,14 +155,17 @@ export default class WalletService {
    * @return {Boolean}
    */
   static isBip39Passphrase (passphrase, language) {
-    return bip39.validateMnemonic(this.normalizePassphrase(passphrase), bip39.wordlists[language])
+    return bip39.validateMnemonic(
+      this.normalizePassphrase(passphrase),
+      bip39.wordlists[language]
+    )
   }
 
   /**
    * Check that a username is valid
    *
    * @param {String} username
-   * @return {Object} { errors: Array, passes: Boolean }
+   * @return {Boolean}
    */
   static validateUsername (username) {
     const errors = []
@@ -150,7 +176,7 @@ export default class WalletService {
       errors.push({ type: 'maxLength' })
     } else if (store.getters['delegate/byUsername'](username)) {
       errors.push({ type: 'exists' })
-    // Regex from `@arkecosystem/crypto`
+      // Regex from `@arkecosystem/crypto`
     } else if (!username.match(/^[a-z0-9!@$&_.]+$/)) {
       errors.push({ type: 'invalidFormat' })
     }
@@ -162,6 +188,26 @@ export default class WalletService {
   }
 
   /**
+   * Check that a username exists
+   *
+   * @param {String} username
+   * @return {Object} { errors: Array, passes: Boolean }
+   */
+  static isUsernameExist (username) {
+    if (username.length < 1) {
+      return false
+    } else if (username.length > 20) {
+      return false
+    } else if (store.getters['delegate/byUsername'](username)) {
+      return true
+      // Regex from `@arkecosystem/crypto`
+    } else if (!username.match(/^[a-z0-9!@$&_.]+$/)) {
+      return false
+    }
+    return false
+  }
+
+  /**
    * Check that a password match an address
    * @param {String} address
    * @param {String} passhrase
@@ -169,6 +215,29 @@ export default class WalletService {
    * @return {Boolean}
    */
   static verifyPassphrase (address, passphrase, pubKeyHash) {
-    return address === WalletService.getAddress(this.normalizePassphrase(passphrase), pubKeyHash)
+    return (
+      address ===
+      WalletService.getAddress(this.normalizePassphrase(passphrase), pubKeyHash)
+    )
+  }
+
+  /*
+   * Get Wallet by Username, publicKey, or address.
+   * @param {String} keyword
+   * @return {Object}
+   */
+  static async getWalletInfo (keyword) {
+    const response = await got(APIURLS.wallets + keyword)
+    return JSON.parse(response.body)
+  }
+
+  /*
+   * Get Delegate by Username, publicKey, or address.
+   * @param {String} keyword
+   * @return {Object}
+   */
+  static async getDelegateInfo (keyword) {
+    const response = await got(APIURLS.delegates + keyword)
+    return JSON.parse(response.body)
   }
 }

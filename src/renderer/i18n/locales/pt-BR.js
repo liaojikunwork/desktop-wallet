@@ -236,6 +236,7 @@ export default {
     NETWORKS: 'Gerenciar redes',
     PLUGINS: 'Plugins',
     PLUGINS_PAGES: 'Páginas de plugins',
+    SEARCH: 'Search',
     SETTINGS: {
       CURRENCY: 'Moeda',
       DARK_MODE: 'Modo escuro',

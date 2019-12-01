@@ -1,5 +1,6 @@
-import { TRANSACTION_TYPES } from '@config'
+import { TRANSACTION_TYPES, APIURLS } from '@config'
 import { Transactions } from '@arkecosystem/crypto'
+import got from 'got'
 
 export default class TransactionService {
   /*
@@ -17,10 +18,12 @@ export default class TransactionService {
    * @return {String}
    */
   static getBytes (transaction) {
-    return Transactions.Serializer.getBytes(transaction, {
-      excludeSignature: true,
-      excludeSecondSignature: true
-    }).toString('hex')
+    return Transactions.Serializer
+      .getBytes(transaction, {
+        excludeSignature: true,
+        excludeSecondSignature: true
+      })
+      .toString('hex')
   }
 
   /*
@@ -53,5 +56,32 @@ export default class TransactionService {
     transaction.id = this.getId(transaction)
 
     return transaction
+  }
+
+  /*
+   * Get Transaction by TransactionId.
+   * @param {String} transactionID
+   * @return {Object}
+   */
+  static async getTransactionInfo (transactionID) {
+    const response = await got(APIURLS.transactions + transactionID)
+    return JSON.parse(response.body)
+  }
+
+  /*
+   * Get Transactions by Option.
+   * @param {Option} searchOption
+   * @param {Number} limit
+   * @return {Object}
+   */
+  static async getTransactions (searchOption, limit = 2) {
+    const response = await got(APIURLS.transactions + 'search?limit=' + limit, {
+      method: 'post',
+      body: JSON.stringify(searchOption),
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+    return JSON.parse(response.body)
   }
 }

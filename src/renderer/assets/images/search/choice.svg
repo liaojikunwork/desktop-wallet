@@ -1,0 +1,20 @@
+<svg id="arrow_" data-name="arrow " xmlns="http://www.w3.org/2000/svg" width="60" height="57" viewBox="0 0 20 19">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #e9f2ff;
+        fill-opacity: 0;
+        stroke: #515880;
+        stroke-linejoin: round;
+        stroke-width: 1px;
+      }
+
+      .cls-2 {
+        fill: #a5b7d3;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <rect id="button" class="cls-1" x="0.5" y="0.5" width="19" height="18" rx="2" ry="2"/>
+  <path id="arrow_2" data-name="arrow " class="cls-2" d="M803.6,203c-0.378,0-.9.415-0.384,1.218s1.928,2.719,2.309,3.249a1.138,1.138,0,0,0,1.924,0c0.607-.875,1.968-2.755,2.309-3.249s0.4-1.218-.384-1.218H803.6Z" transform="translate(-796.5 -195.5)"/>
+</svg>
